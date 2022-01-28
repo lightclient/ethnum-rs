@@ -214,6 +214,6 @@ mod tests {
     #[ignore]
     #[allow(clippy::float_cmp)]
     fn converts_to_f64() {
-        assert_eq!((-I256::from_words(1, 0)).as_f64(), -2.0f64.powi(128))
+        assert_eq!((-I256::from_words(1, 0)).as_f64(), -(2.0f64.powi(128)))
     }
 }

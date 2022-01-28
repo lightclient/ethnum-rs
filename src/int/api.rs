@@ -740,7 +740,7 @@ impl I256 {
         // Deal with the final bit of the exponent separately, since
         // squaring the base afterwards is not necessary and may cause a
         // needless overflow.
-        Some(acc.checked_mul(base)?)
+        acc.checked_mul(base)
     }
 
     /// Saturating integer addition. Computes `self + rhs`, saturating at the numeric
@@ -1637,7 +1637,7 @@ impl I256 {
 
         while exp > 1 {
             if (exp & 1) == 1 {
-                acc = acc * base;
+                acc *= base;
             }
             exp /= 2;
             base = base * base;

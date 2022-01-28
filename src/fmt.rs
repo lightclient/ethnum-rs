@@ -109,7 +109,7 @@ pub(crate) trait GenericRadix: Sized {
         // to the most significant figure.
         for byte in buf.iter_mut().rev() {
             let n = x % base; // Get the current place value.
-            x = x / base; // Deaccumulate the number.
+            x /= base; // Deaccumulate the number.
             byte.write(Self::digit(n.as_u8())); // Store the digit in the buffer.
             curr -= 1;
             if x == zero {

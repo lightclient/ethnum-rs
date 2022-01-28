@@ -22,6 +22,7 @@ mod tests {
     use core::num::NonZeroU32;
 
     #[test]
+    #[allow(clippy::from_str_radix_10)]
     fn parse_int_error() {
         assert_eq!(
             pie(IntErrorKind::Empty),

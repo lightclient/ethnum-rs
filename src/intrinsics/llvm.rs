@@ -1,18 +1,17 @@
 //! This module contains definitions for LLVM IR generated intrinsics.
 
-// NOTE: LLVM IR generated intrinsics for `udiv i256` and `urem i256` produce an
-// error when compiling, so use the native `divmod` implementation even when
-// generated intrinsics are enabled.
+// NOTE: LLVM IR generated intrinsics for `{i,u}div i256`, `{i,u}rem i256`, and
+// `imul i256` produce an error when compiling. Use the native implementations
+// even when generated intrinsics are enabled.
 #[path = "native/divmod.rs"]
 mod divmod;
+#[path = "native/mul.rs"]
+#[allow(dead_code)]
+mod mul;
 
-pub use self::divmod::*;
+pub use self::{divmod::*, mul::imulc};
 use crate::{int::I256, uint::U256};
 use core::mem::{self, MaybeUninit};
-
-pub fn imulc(_: &mut MaybeUninit<I256>, _: &I256, _: &I256) -> bool {
-    todo!()
-}
 
 macro_rules! def {
     ($(
@@ -71,17 +70,26 @@ def! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::alloc::Layout;
+    use core::{alloc::Layout, mem};
 
     #[test]
     fn layout() {
+        // Small note on alignment: Since we pass in pointers to our wide
+        // integer types we need only to make sure that the alignment of
+        // `ethnum::{I256, U256}` types are larger than the FFI-safe type (i.e.
+        // the alignment is compatible with the FFI type).
+
         assert_eq!(
             Layout::new::<I256>(),
             Layout::new::<ethnum_intrinsics::I256>()
+                .align_to(mem::align_of::<I256>())
+                .unwrap(),
         );
         assert_eq!(
             Layout::new::<U256>(),
             Layout::new::<ethnum_intrinsics::I256>()
+                .align_to(mem::align_of::<U256>())
+                .unwrap(),
         );
     }
 }

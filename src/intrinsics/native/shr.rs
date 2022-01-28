@@ -12,13 +12,13 @@ pub fn sar2(r: &mut I256, a: u32) {
     } else if a < 128 {
         (
             r.high() >> a,
-            (*r.low() as u128) >> a | ((*r.high() as u128) << (128 - a)),
+            ((*r.low() as u128) >> a | ((*r.high() as u128) << (128 - a))) as i128,
         )
     } else {
-        (r.high() >> 128, ((*r.high() as u128) >> (a & 0x7f)))
+        (r.high() >> 128, (r.high() >> (a & 0x7f)))
     };
 
-    *r = I256::from_words(hi, lo as _);
+    *r = I256::from_words(hi, lo);
 }
 
 #[inline]
@@ -26,17 +26,17 @@ pub fn sar3(r: &mut MaybeUninit<I256>, a: &I256, b: u32) {
     debug_assert!(b < 256, "shr intrinsic called with overflowing shift");
 
     let (hi, lo) = if b == 0 {
-        (*a.high(), (*a.low() as u128))
+        (*a.high(), *a.low())
     } else if b < 128 {
         (
             a.high() >> b,
-            (*a.low() as u128) >> b | ((*a.high() as u128) << (128 - b)),
+            ((*a.low() as u128) >> b | ((*a.high() as u128) << (128 - b))) as i128,
         )
     } else {
-        (a.high() >> 128, (*a.high() as u128) >> (b & 0x7f))
+        (a.high() >> 128, a.high() >> (b & 0x7f))
     };
 
-    r.write(I256::from_words(hi, lo as _));
+    r.write(I256::from_words(hi, lo));
 }
 
 #[inline]

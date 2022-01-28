@@ -5,7 +5,13 @@
 
 use core::mem::MaybeUninit;
 
-pub type I256 = [u64; 4];
+/// Opaque type used as parameter to intriniscs.
+///
+/// Guaranteed to have a memory layout compatible with `ethnum::{I256, U256}`.
+#[repr(C)]
+pub struct I256 {
+    _i: [u64; 4],
+}
 
 macro_rules! def {
     ($(
