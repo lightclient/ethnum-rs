@@ -29,6 +29,8 @@ pub fn usubc(r: &mut MaybeUninit<U256>, a: &U256, b: &U256) -> bool {
 }
 
 #[inline]
-pub fn isubc(_: &mut MaybeUninit<I256>, _: &I256, _: &I256) -> bool {
-    todo!()
+pub fn isubc(r: &mut MaybeUninit<I256>, a: &I256, b: &I256) -> bool {
+    sub3(cast!(uninit: r), cast!(ref: a), cast!(ref: b));
+    let s = unsafe { r.assume_init_ref() };
+    (*b.high() >= 0 && s > a) || (*b.high() < 0 && s <= a)
 }
